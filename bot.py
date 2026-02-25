@@ -108,7 +108,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
             min_length=5,
             max_length=5,
             placeholder="ex: 10/03",
-            required=False,
+            required=True,
         )
         self.add_item(self.short_2)
 
@@ -118,7 +118,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
             min_length=5,
             max_length=5,
             placeholder="ex: 21h00",
-            required=False,
+            required=True,
         )
         self.add_item(self.short_3)
 
