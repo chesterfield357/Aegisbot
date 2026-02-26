@@ -1,7 +1,6 @@
-# Version 0.01 du bot discord
+# Version 1.02 du bot discord
 # Test des fonctions, premier jet, juste répondre à la commande !ping
 
-# FAIRE LE TAG DES ROLES, TESTER LE BOT EN EXTERNE, HEBERGER LE BOT ET TESTER SUR LE SERVEUR TEST
 # FAIRE LE FORMULAIRE POUR LES PUSH
 
 import os # Import pour utiliser l'environnement
@@ -17,6 +16,10 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 RAID_HELPER_TOKEN = os.getenv('RAID_HELPER_TOKEN')
 SERVER_ID = os.getenv('SERVER_ID')
 CHANNEL_ID = os.getenv('CHANNEL_ID')
+TANK_ID = os.getenv('TANK_ID')
+HEAL_ID = os.getenv('HEAL_ID')
+DPS_ID = os.getenv('DPS_ID')
+GM_ID = os.getenv("GM_ID")
 
 print("Lancement du bot...")
 
@@ -53,8 +56,8 @@ class Questionnaire(ui.Modal, title="Création d'un event donjon"):
 #    async def callback(self, interaction):
 #       await super().callback(interaction.response.send_modal(Questionnaire()))
    
-class MyView(discord.ui.View):
-    @discord.ui.button(label='Donjon', style=discord.ButtonStyle.red)
+class Completion_Button(discord.ui.View):
+    @discord.ui.button(label='📈 Key Completion', style=discord.ButtonStyle.green)
     async def on_button_click(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         await interaction.response.send_modal(Completion())
 
@@ -130,9 +133,9 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
                 min_values = 1,
                 max_values = 3,
                 options = [
-                    discord.SelectOption(label="Tank", value="1467532873950171220"),
-                    discord.SelectOption(label="Heal", value="1467532901703745608"),
-                    discord.SelectOption(label="DPS", value="1467532934402543699"),
+                    discord.SelectOption(label="Tank", value=TANK_ID),
+                    discord.SelectOption(label="Heal", value=HEAL_ID),
+                    discord.SelectOption(label="DPS", value=DPS_ID),
                 ],
             ),
         ))
@@ -153,10 +156,10 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         try:
             key_level_int = int(key_level_str)
         except:
-            await interaction.response.send_message(f"ERREUR: La niveau de clé doit être désignée par un nombre", ephemeral=True, delete_after=30)
+            await interaction.response.send_message(f"ERREUR: La niveau de clé doit être désignée par un nombre", ephemeral=True)
             return
         if key_level_int >= 31 or key_level_int <= 1:
-            await interaction.response.send_message(f"ERREUR: Il faut rentrer un niveau de clé entre 2 et 30", ephemeral=True, delete_after=30)
+            await interaction.response.send_message(f"ERREUR: Il faut rentrer un niveau de clé entre 2 et 30", ephemeral=True)
             return
         
         # Test pour voir si la date est au bon format
@@ -167,7 +170,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
             month_int = int(month_str.lstrip('0'))
             datetime(datetime.now().year, month_int, day_int)
         except:
-            await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True, delete_after=30)
+            await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True)
             return
 
         # Test pour voir si les heures est minutes sont bien au bon format
@@ -180,7 +183,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
                 hour_int = int(hour_str.lstrip('0'))
                 datetime(datetime.now().year, month_int, day_int, hour_int)
             except:
-                await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True, delete_after=30)
+                await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True)
                 return
         if min_str == "00":
             min_int = 00
@@ -189,18 +192,18 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
                 min_int = int(min_str.lstrip('0'))
                 datetime(datetime.now().year, month_int, day_int, hour_int, min_int)
             except:
-                await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True, delete_after=30)
+                await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True)
                 return
         
         # Test pour voir si la date est antérieur à maintenant
         try:
             tested_now = datetime(datetime.now().year, month_int, day_int, hour_int, min_int)
         except ValueError as e:
-            await interaction.response.send_message(f"ERREUR: La date ou l'heure demandée est invalide: \n Détail:{e}", ephemeral=True, delete_after=30)
+            await interaction.response.send_message(f"ERREUR: La date ou l'heure demandée est invalide: \n Détail:{e}", ephemeral=True)
             return
         real_now = datetime.now()
         if tested_now < real_now:
-            await interaction.response.send_message(f"ERREUR: La date demandée est antérieur à maintenant", ephemeral=True, delete_after=30)
+            await interaction.response.send_message(f"ERREUR: La date demandée est antérieur à maintenant", ephemeral=True)
             return
 
         # Select: discord.py te donne les valeurs via les composants reçus
@@ -213,7 +216,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         # print(item.component.values[1])
         # print(item.component.values[2])
 
-        await interaction.response.send_message(f"Ton event à été créé, n'oublie pas de t'y inscrire !", ephemeral=True, delete_after=30)
+        await interaction.response.send_message(f"Ton event à été créé, n'oublie pas de t'y inscrire !", ephemeral=True)
 
         # Requete Raid Helper
         usr = interaction.user.id
@@ -248,9 +251,9 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         # )
 
 # Command to trigger the view
-@bot.tree.command(name="ticket")
-async def ticket_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Choose a category:", view=Donjon_Select(), ephemeral=True, delete_after=5)
+# @bot.tree.command(name="ticket")
+# async def ticket_command(interaction: discord.Interaction):
+#     await interaction.response.send_message("Choose a category:", view=Donjon_Select(), ephemeral=True, delete_after=5)
 
 # Commande pour executer le form
 # @bot.tree.command(name="donjon_bis", description="Tester le form donjon")
@@ -288,7 +291,14 @@ Tu veux faire un certain niveau (ex: +12), peu importe le donjon.
       color=discord.Color.blue()
    )
 #    embed.add_field(name="Test field", value="Test de value de field") # Ligne pour creer un field dans un embed
-   await interaction.response.send_message(embed=embed, view=Donjon_Select())
+   await interaction.response.send_message(embed=embed, view=Completion_Button())
+
+@bot.tree.command(name="bot_stop", description="Commande pour stopper Aegisbot")
+@commands.has_role(GM_ID)
+async def shutdown(interaction: discord.Interaction):
+    await interaction.response.send_message("Le bot s'éteint", ephemeral=True, delete_after=30)
+    await bot.close()
+    print("Commande d'arrêt du bot lancée")
 
 
 bot.run(TOKEN) # Démarre le bot (il apparait en ligne)
