@@ -20,6 +20,7 @@ TANK_ID = os.getenv('TANK_ID')
 HEAL_ID = os.getenv('HEAL_ID')
 DPS_ID = os.getenv('DPS_ID')
 GM_ID = os.getenv("GM_ID")
+OFFICER_ID= os.getenv('OFFICER_ID')
 
 print("Lancement du bot...")
 
@@ -87,7 +88,7 @@ class Donjon_Select(discord.ui.View):
         selected_value = interaction.data["values"][0]
         if selected_value == "completion":
             await interaction.response.send_modal(Completion())
-            await interaction.edit_original_response(view=Donjon_Select())
+            # await interaction.edit_original_response(view=Donjon_Select())
         else:
             await interaction.response.send_message(f"Désolé, ce formulaire est encore en developpement", ephemeral=True)
 
@@ -269,6 +270,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
 #       await channel.send("Comment tu vas ?")
 
 @bot.tree.command(name="donjon", description="Poster le message pour les donjons")
+@commands.has_role(OFFICER_ID)
 async def test(interaction: discord.Interaction):
    embed = discord.Embed(
       title="🔑 Organisation des Clés Mythiques+",
