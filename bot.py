@@ -53,14 +53,21 @@ class Questionnaire(ui.Modal, title="Création d'un event donjon"):
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(f"Ton event à été créé, n'oublie pas de t'inscrire !", ephemeral=True)
 
-# class Donjon_Bouton(ui.Button, label="Donjon"):
+# class Completion_Button(ui.Button, label="Donjon"):
 #    async def callback(self, interaction):
-#       await super().callback(interaction.response.send_modal(Questionnaire()))
+#       await super().callback(interaction.response.send_modal(Completion()))
    
 class Completion_Button(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
     @discord.ui.button(label='📈 Key Completion', style=discord.ButtonStyle.green)
-    async def on_button_click(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+    async def bouton_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(Completion())
+        # await interaction.edit_original_response(view=Completion_Button())
+
+#     def is_persistent(self):
+#         return super().is_persistent()
 
 
 class Donjon_Select(discord.ui.View):
@@ -243,7 +250,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
             "Content-Type": "application/json",
             "Authorization": f"{RAID_HELPER_TOKEN}"
         }
-
+        
         response = requests.post(url, json=payload, headers=headers)
 
         # await interaction.response.send_message(
