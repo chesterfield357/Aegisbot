@@ -192,6 +192,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         else:
             try:
                 hour_int = int(hour_str.lstrip('0'))
+                hour_int -= 1
                 datetime(datetime.now().year, month_int, day_int, hour_int)
             except:
                 await interaction.response.send_message(f"ERREUR: Il faut rentrer des nombres (ex: 10/02 ou 15:00 ou 15h00)", ephemeral=True)
