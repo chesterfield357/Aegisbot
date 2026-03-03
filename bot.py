@@ -108,7 +108,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
             label="Niveau de la clé à faire ?",
             min_length=1,
             max_length=2,
-            placeholder="ex: 12",
+            placeholder="ex: 12 ou 0 pour du M0",
             required=True,
         )
         self.add_item(self.short_1)
@@ -166,8 +166,11 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         except:
             await interaction.response.send_message(f"ERREUR: La niveau de clé doit être désignée par un nombre", ephemeral=True)
             return
-        if key_level_int >= 31 or key_level_int <= 1:
-            await interaction.response.send_message(f"ERREUR: Il faut rentrer un niveau de clé entre 2 et 30", ephemeral=True)
+        if key_level_int == 0:
+            key_level = f"M0"
+        elif key_level_int >= 31 or key_level_int <= 1:
+            key_level = f"+{key_level_int}"
+            await interaction.response.send_message(f"ERREUR: Il faut rentrer un niveau de clé entre 2 et 30 ou 0", ephemeral=True)
             return
         
         # Test pour voir si la date est au bon format
@@ -233,7 +236,7 @@ class Completion(discord.ui.Modal, title="📈 Key completion"):
         payload = {
             "leaderId": f"{usr}",
             "templateId": "ct17",
-            "title": f"+{key_level_int} Completion",
+            "title": f"{key_level} Completion",
             "date": f"{int(tested_now.timestamp())}",
             "time": f"{hour_int}:{min_int}",
             "roles": [
